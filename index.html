@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EmoSimplex Subjective Survey</title>
+<style>
+:root {
+  --bg:#0f1117; --panel:#171b26; --card:#1f2433; --line:#30364a;
+  --text:#eef1f7; --muted:#9aa3b8; --accent:#6c8cff; --good:#4ade80;
+  --bad:#fb7185; --warn:#fbbf24; --btn:#2a3146; --btn2:#3a435f;
+}
+*{box-sizing:border-box;margin:0;padding:0} body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:linear-gradient(180deg,#0f1117,#121623);color:var(--text);min-height:100vh;line-height:1.55}.wrap{max-width:860px;margin:0 auto;padding:28px 18px 70px}.top{padding:24px 0 22px;border-bottom:1px solid var(--line);margin-bottom:22px}.top h1{font-size:25px;margin-bottom:6px}.top p{color:var(--muted);font-size:14px}.panel{background:rgba(23,27,38,.96);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 18px 60px rgba(0,0,0,.25)}.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.hidden{display:none!important}.muted{color:var(--muted)}.small{font-size:12px}.badge{display:inline-flex;align-items:center;padding:5px 11px;border-radius:999px;background:rgba(108,140,255,.14);color:#9db2ff;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.title{font-size:20px;font-weight:800;margin:12px 0 6px}.desc{color:var(--muted);font-size:14px;margin-bottom:18px}.progress{height:6px;background:#252b3d;border-radius:99px;overflow:hidden;margin:16px 0 8px}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#9f7aea);transition:.25s}.progress-text{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-bottom:18px}.audio-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin:14px 0;text-align:center}.sample-label{font-size:13px;color:var(--muted);margin-bottom:12px}.sample-label b{color:var(--text);font-size:18px}audio{width:100%;max-width:520px;height:38px}.pair-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0 18px}@media(max-width:640px){.pair-grid{grid-template-columns:1fr}}.pair-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;text-align:center}.pair-letter{font-size:30px;font-weight:900;color:var(--accent);margin-bottom:12px}.qblock{margin:18px 0}.qtitle{font-size:14px;font-weight:750;text-align:center;margin-bottom:10px}.choices{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}.choice{border:1px solid var(--line);background:var(--btn);color:var(--muted);border-radius:999px;padding:9px 18px;font-weight:750;cursor:pointer;transition:.12s;font-size:14px}.choice:hover{background:var(--btn2);color:white}.choice.sel{background:var(--accent);border-color:var(--accent);color:white}.choice.pass.sel,.choice.yes.sel{background:rgba(74,222,128,.18);border-color:var(--good);color:var(--good)}.choice.fail.sel,.choice.no.sel{background:rgba(251,113,133,.16);border-color:var(--bad);color:var(--bad)}.nat .choice{width:42px;height:42px;padding:0;border-radius:12px}.nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px}.btn{border:0;border-radius:12px;padding:12px 22px;font-weight:800;cursor:pointer;background:var(--accent);color:white}.btn:disabled{opacity:.42;cursor:not-allowed}.btn.secondary{background:var(--btn);color:var(--text);border:1px solid var(--line)}.input{width:100%;max-width:360px;background:#10141f;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:11px 13px;margin-top:8px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}@media(max-width:760px){.summary{grid-template-columns:repeat(2,1fr)}}.sum-card{background:#111622;border:1px solid var(--line);border-radius:12px;padding:13px;text-align:center}.sum-card .n{font-size:22px;font-weight:900}.sum-card .k{font-size:12px;color:var(--muted)}pre{background:#0b0e15;border:1px solid var(--line);border-radius:12px;padding:14px;max-height:360px;overflow:auto;font-size:12px;color:#c7d2fe;white-space:pre-wrap}.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--good);color:#07100a;padding:10px 18px;border-radius:10px;font-weight:800;opacity:0;transition:.2s;pointer-events:none}.toast.show{opacity:1}.warn{border-left:4px solid var(--warn);padding:10px 12px;background:rgba(251,191,36,.08);border-radius:8px;color:#f6d98b;margin:14px 0;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1>EmoSimplex Subjective Survey</h1>
+    <p>Blind listening test. Please use headphones and answer based only on the audio.</p>
+  </div>
+
+  <section id="intro" class="panel">
+    <span class="badge">Setup</span>
+    <div class="title">Before you start</div>
+    <div class="desc">
+      You will hear one audio sample or one A/B pair at a time. System names are hidden during the survey.
+      No text content is shown; judge only the perceived voice emotion and audio quality.
+    </div>
+    <div class="warn">The final JSON will be downloaded by your browser to its default download folder, usually <b>Downloads</b>. It is not automatically saved on this server.</div>
+    <label class="small muted">Participant ID / notes (optional)</label><br />
+    <input id="participant" class="input" placeholder="e.g., listener_01" />
+    <div class="summary" id="intro-summary"></div>
+    <div class="nav">
+      <span class="muted small" id="load-status">Loading manifest...</span>
+      <button class="btn" id="start-btn" disabled>Start Survey</button>
+    </div>
+  </section>
+
+  <section id="survey" class="panel hidden">
+    <span class="badge" id="part-badge">Part</span>
+    <div class="title" id="part-title"></div>
+    <div class="desc" id="part-desc"></div>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <div class="progress-text"><span id="step-text"></span><span id="count-text"></span></div>
+    <div id="task-host"></div>
+    <div class="nav">
+      <button class="btn secondary" id="back-btn">← Back</button>
+      <button class="btn" id="next-btn" disabled>Next →</button>
+    </div>
+  </section>
+
+  <section id="done" class="panel hidden">
+    <span class="badge">Done</span>
+    <div class="title">Survey completed</div>
+    <div class="desc">Your result JSON has been triggered for download. You can also download or copy it again below.</div>
+    <div class="summary" id="done-summary"></div>
+    <div class="row" style="margin:16px 0;">
+      <button class="btn" id="download-again">Download JSON again</button>
+      <button class="btn secondary" id="copy-json">Copy JSON</button>
+      <button class="btn secondary" onclick="location.reload()">Restart</button>
+    </div>
+    <pre id="json-preview"></pre>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const PARTS = [
+  { key:'part1a', label:'Part 1A', title:'Intensity: single-sample rating', desc:'For each sample, decide whether the target emotion is recognizable, then rate naturalness.' },
+  { key:'part1b', label:'Part 1B', title:'Intensity: A/B comparison', desc:'Listen to A and B. A is expected to be stronger. Decide whether A is more emotionally intense than B.' },
+  { key:'part2', label:'Part 2', title:'Text-control inconsistency', desc:'Ignore the text content. Decide whether the perceived voice emotion matches the target emotion.' },
+  { key:'part3', label:'Part 3', title:'Mixed emotions', desc:'Decide whether both target emotions are audible, which emotion is dominant, and rate naturalness.' },
+];
+const EMO = { happiness:'happy', sadness:'sad' };
+let manifest = null;
+let tasks = [];
+let idx = 0;
+let responses = [];
+let current = {};
+let sessionId = 'sess_' + new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14) + '_' + Math.random().toString(36).slice(2,7);
+let startedAt = null;
+let finalJSON = null;
+
+function shuffle(a){ const x=[...a]; for(let i=x.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [x[i],x[j]]=[x[j],x[i]]; } return x; }
+function norm(e){ return EMO[e] || e || ''; }
+function up(e){ return norm(e).toUpperCase(); }
+function toast(s){ const t=document.getElementById('toast'); t.textContent=s; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1800); }
+
+fetch('data/survey_manifest.json')
+  .then(r => r.json())
+  .then(m => {
+    manifest = m;
+    buildTasks();
+    document.getElementById('load-status').textContent = `${tasks.length} screens loaded`;
+    document.getElementById('start-btn').disabled = false;
+    document.getElementById('intro-summary').innerHTML = `
+      <div class="sum-card"><div class="n">${m.counts.part1a}</div><div class="k">Part 1A samples</div></div>
+      <div class="sum-card"><div class="n">${m.counts.part1b}</div><div class="k">Part 1B pairs</div></div>
+      <div class="sum-card"><div class="n">${m.counts.part2}</div><div class="k">Part 2 samples</div></div>
+      <div class="sum-card"><div class="n">${m.counts.part3}</div><div class="k">Part 3 samples</div></div>`;
+  })
+  .catch(err => { document.getElementById('load-status').textContent = 'Failed to load manifest: ' + err; });
+
+function buildTasks(){
+  tasks = [];
+  for (const p of PARTS) {
+    for (const item of shuffle(manifest.sections[p.key])) {
+      tasks.push({part:p.key, item});
+    }
+  }
+}
+
+document.getElementById('start-btn').onclick = () => {
+  startedAt = new Date().toISOString();
+  document.getElementById('intro').classList.add('hidden');
+  document.getElementById('survey').classList.remove('hidden');
+  render();
+};
+document.getElementById('back-btn').onclick = () => {
+  if (idx <= 0) return;
+  saveCurrent(false);
+  idx--;
+  const old = responses.find(r => r._taskIndex === idx);
+  current = old ? JSON.parse(JSON.stringify(old.answers)) : {};
+  render();
+};
+document.getElementById('next-btn').onclick = () => {
+  if (!isComplete()) { toast('Please complete all required answers.'); return; }
+  saveCurrent(true);
+  idx++;
+  current = {};
+  if (idx >= tasks.length) finishSurvey(); else render();
+};
+
+function partInfo(key){ return PARTS.find(p=>p.key===key); }
+function render(){
+  const {part,item} = tasks[idx];
+  const info = partInfo(part);
+  document.getElementById('part-badge').textContent = info.label;
+  document.getElementById('part-title').textContent = info.title;
+  document.getElementById('part-desc').textContent = info.desc;
+  document.getElementById('bar').style.width = Math.round((idx / tasks.length) * 100) + '%';
+  document.getElementById('step-text').textContent = `${info.label} · ${idx + 1} / ${tasks.length}`;
+  document.getElementById('count-text').textContent = `${Math.round(((idx + 1) / tasks.length) * 100)}%`;
+  document.getElementById('back-btn').disabled = idx === 0;
+  const host = document.getElementById('task-host');
+  if (part === 'part1b') host.innerHTML = renderPair(item);
+  else host.innerHTML = renderSingle(part, item);
+  restoreUI();
+  updateNext();
+}
+
+function renderSingle(part,item){
+  const target = up(item.target_emotion);
+  let q = '';
+  if (part === 'part1a') q = `Does this speech sound like <strong>${target}</strong>?`;
+  if (part === 'part2') q = `Does this speech sound like <strong>${target}</strong> (the target)?`;
+  if (part === 'part3') q = `Can you hear <strong>BOTH ${up(item.emotion_a)} and ${up(item.emotion_b)}</strong>?`;
+  return `
+    <div class="audio-card">
+      <div class="sample-label">Sample <b>${idx + 1}</b></div>
+      <audio controls preload="auto"><source src="${item.audio_url}" type="audio/wav"></audio>
+    </div>
+    <div class="qblock"><div class="qtitle">${q}</div>
+      <div class="choices">
+        <button class="choice pass" data-k="binary" data-v="pass">PASS ✓</button>
+        <button class="choice fail" data-k="binary" data-v="fail">FAIL ✗</button>
+      </div>
+    </div>
+    ${part === 'part3' ? `<div class="qblock"><div class="qtitle">Which emotion is more dominant?</div>
+      <div class="choices">
+        <button class="choice" data-k="dominance" data-v="${norm(item.emotion_a)}">${up(item.emotion_a)}</button>
+        <button class="choice" data-k="dominance" data-v="${norm(item.emotion_b)}">${up(item.emotion_b)}</button>
+        <button class="choice" data-k="dominance" data-v="equal">EQUAL</button>
+      </div></div>` : ''}
+    <div class="qblock"><div class="qtitle">Naturalness</div>
+      <div class="choices nat">
+        ${[1,2,3,4,5].map(n=>`<button class="choice" data-k="naturalness" data-v="${n}">${n}</button>`).join('')}
+      </div>
+    </div>`;
+}
+function renderPair(pair){
+  return `
+    <div class="pair-grid">
+      <div class="pair-card"><div class="pair-letter">A</div><audio controls preload="auto"><source src="${pair.A.audio_url}" type="audio/wav"></audio></div>
+      <div class="pair-card"><div class="pair-letter">B</div><audio controls preload="auto"><source src="${pair.B.audio_url}" type="audio/wav"></audio></div>
+    </div>
+    <div class="qblock"><div class="qtitle">Is A more emotionally intense than B?</div>
+      <div class="choices">
+        <button class="choice yes" data-k="binary" data-v="yes">YES ✓ (A &gt; B)</button>
+        <button class="choice no" data-k="binary" data-v="no">NO ✗ (A ≤ B)</button>
+      </div>
+    </div>`;
+}
+
+document.getElementById('task-host').addEventListener('click', e => {
+  const b = e.target.closest('button[data-k]');
+  if (!b) return;
+  current[b.dataset.k] = b.dataset.v;
+  restoreUI();
+  updateNext();
+});
+function restoreUI(){
+  document.querySelectorAll('button[data-k]').forEach(b => b.classList.toggle('sel', current[b.dataset.k] === b.dataset.v));
+}
+function isComplete(){
+  const part = tasks[idx].part;
+  if (part === 'part1b') return !!current.binary;
+  if (part === 'part3') return !!current.binary && !!current.dominance && !!current.naturalness;
+  return !!current.binary && !!current.naturalness;
+}
+function updateNext(){ document.getElementById('next-btn').disabled = !isComplete(); document.getElementById('next-btn').textContent = idx === tasks.length - 1 ? 'Finish & Download JSON' : 'Next →'; }
+
+function publicMeta(item){
+  const omit = new Set(['audio_path','source_path','source_url','source_page']);
+  const o = {};
+  for (const [k,v] of Object.entries(item)) if (!omit.has(k)) o[k]=v;
+  return o;
+}
+function saveCurrent(overwrite){
+  const t = tasks[idx];
+  let record;
+  if (t.part === 'part1b') {
+    const p = t.item;
+    record = {
+      _taskIndex: idx,
+      part: t.part,
+      pair_id: p.pair_id,
+      system: p.system,
+      target_emotion: p.target_emotion,
+      text_id: p.text_id,
+      expected_relation: p.expected_relation,
+      A: publicMeta(p.A),
+      B: publicMeta(p.B),
+      answers: {...current},
+      matches_expected: current.binary === 'yes'
+    };
+  } else {
+    const it = t.item;
+    record = {
+      _taskIndex: idx,
+      part: t.part,
+      item_id: it.item_id,
+      system: it.system,
+      audio_relpath: it.audio_relpath,
+      target_emotion: it.target_emotion || null,
+      emotion_a: it.emotion_a || null,
+      emotion_b: it.emotion_b || null,
+      expected_dominance: it.expected_dominance || null,
+      meta: publicMeta(it),
+      answers: {...current}
+    };
+  }
+  const pos = responses.findIndex(r => r._taskIndex === idx);
+  if (pos >= 0) responses[pos] = record; else responses.push(record);
+}
+function buildResult(){
+  const completedAt = new Date().toISOString();
+  return {
+    session_id: sessionId,
+    participant: document.getElementById('participant').value || 'anonymous',
+    started_at: startedAt,
+    completed_at: completedAt,
+    duration_seconds: Math.round((new Date(completedAt) - new Date(startedAt)) / 1000),
+    manifest_counts: manifest.counts,
+    total_screens: tasks.length,
+    responses: responses.sort((a,b)=>a._taskIndex-b._taskIndex).map(({_taskIndex,...r})=>r)
+  };
+}
+function finishSurvey(){
+  document.getElementById('survey').classList.add('hidden');
+  document.getElementById('done').classList.remove('hidden');
+  finalJSON = buildResult();
+  document.getElementById('json-preview').textContent = JSON.stringify(finalJSON,null,2);
+  const counts = finalJSON.responses.reduce((a,r)=>{ a[r.part]=(a[r.part]||0)+1; return a; },{});
+  document.getElementById('done-summary').innerHTML = `
+    <div class="sum-card"><div class="n">${counts.part1a||0}</div><div class="k">Part 1A</div></div>
+    <div class="sum-card"><div class="n">${counts.part1b||0}</div><div class="k">Part 1B</div></div>
+    <div class="sum-card"><div class="n">${counts.part2||0}</div><div class="k">Part 2</div></div>
+    <div class="sum-card"><div class="n">${counts.part3||0}</div><div class="k">Part 3</div></div>`;
+  downloadJSON();
+}
+function downloadJSON(){
+  const blob = new Blob([JSON.stringify(finalJSON,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `emosimplex_survey_${sessionId}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('JSON download started');
+}
+document.getElementById('download-again').onclick = downloadJSON;
+document.getElementById('copy-json').onclick = async () => { await navigator.clipboard.writeText(JSON.stringify(finalJSON,null,2)); toast('Copied'); };
+</script>
+</body>
+</html>
