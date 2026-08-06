@@ -28,8 +28,8 @@
       No text content is shown; judge only the perceived voice emotion and audio quality.
     </div>
     <div class="warn">The final JSON will be downloaded by your browser to its default download folder, usually <b>Downloads</b>. It is not automatically saved on this server.</div>
-    <label class="small muted">Participant ID / notes (optional)</label><br />
-    <input id="participant" class="input" placeholder="e.g., listener_01" />
+    <label class="small muted">Participant ID <span style="color:var(--bad);">*</span></label><br />
+    <input id="participant" class="input" placeholder="Required, e.g., listener_01" required />
     <div class="summary" id="intro-summary"></div>
     <div class="nav">
       <span class="muted small" id="load-status">Loading manifest...</span>
@@ -92,8 +92,8 @@ fetch('data/survey_manifest.json')
   .then(m => {
     manifest = m;
     buildTasks();
-    document.getElementById('load-status').textContent = `${tasks.length} screens loaded`;
-    document.getElementById('start-btn').disabled = false;
+    document.getElementById('load-status').textContent = `${tasks.length} screens loaded · enter Participant ID to start`;
+    updateStartButton();
     document.getElementById('intro-summary').innerHTML = `
       <div class="sum-card"><div class="n">${m.counts.part1a}</div><div class="k">Part 1A samples</div></div>
       <div class="sum-card"><div class="n">${m.counts.part1b}</div><div class="k">Part 1B pairs</div></div>
@@ -111,7 +111,14 @@ function buildTasks(){
   }
 }
 
+function participantId(){ return document.getElementById('participant').value.trim(); }
+function updateStartButton(){
+  document.getElementById('start-btn').disabled = !manifest || !participantId();
+}
+document.getElementById('participant').addEventListener('input', updateStartButton);
+
 document.getElementById('start-btn').onclick = () => {
+  if (!participantId()) { toast('Please enter Participant ID.'); return; }
   startedAt = new Date().toISOString();
   document.getElementById('intro').classList.add('hidden');
   document.getElementById('survey').classList.remove('hidden');
@@ -259,7 +266,7 @@ function buildResult(){
   const completedAt = new Date().toISOString();
   return {
     session_id: sessionId,
-    participant: document.getElementById('participant').value || 'anonymous',
+    participant: participantId(),
     started_at: startedAt,
     completed_at: completedAt,
     duration_seconds: Math.round((new Date(completedAt) - new Date(startedAt)) / 1000),
