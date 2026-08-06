@@ -78,6 +78,7 @@ let tasks = [];
 let idx = 0;
 let responses = [];
 let current = {};
+const DRAFT_KEY = 'emosimplex_survey_draft_v1';
 let sessionId = 'sess_' + new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14) + '_' + Math.random().toString(36).slice(2,7);
 let startedAt = null;
 let finalJSON = null;
@@ -99,6 +100,7 @@ fetch('data/survey_manifest.json?v=' + Date.now(), { cache: 'no-store' })
       <div class="sum-card"><div class="n">${m.counts.part1b}</div><div class="k">Part 1B pairs</div></div>
       <div class="sum-card"><div class="n">${m.counts.part2}</div><div class="k">Part 2 samples</div></div>
       <div class="sum-card"><div class="n">${m.counts.part3}</div><div class="k">Part 3 samples</div></div>`;
+    tryRestoreDraft();
   })
   .catch(err => { document.getElementById('load-status').textContent = 'Failed to load manifest: ' + err; });
 
@@ -115,11 +117,44 @@ function participantId(){ return document.getElementById('participant').value.tr
 function updateStartButton(){
   document.getElementById('start-btn').disabled = !manifest || !participantId();
 }
-document.getElementById('participant').addEventListener('input', updateStartButton);
+function saveDraft(){
+  if (!startedAt) return;
+  const draft = {
+    version: '1.0', saved_at: new Date().toISOString(), session_id: sessionId,
+    participant: participantId(), started_at: startedAt, idx, tasks, responses, current
+  };
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+}
+function clearDraft(){ localStorage.removeItem(DRAFT_KEY); }
+function tryRestoreDraft(){
+  const raw = localStorage.getItem(DRAFT_KEY);
+  if (!raw) return;
+  try {
+    const draft = JSON.parse(raw);
+    if (!draft.tasks || !draft.started_at) return;
+    const ok = confirm(`Found autosaved progress from ${new Date(draft.saved_at).toLocaleString()}. Resume it?`);
+    if (!ok) return;
+    sessionId = draft.session_id || sessionId;
+    startedAt = draft.started_at;
+    idx = draft.idx || 0;
+    tasks = draft.tasks;
+    responses = draft.responses || [];
+    current = draft.current || {};
+    document.getElementById('participant').value = draft.participant || '';
+    document.getElementById('intro').classList.add('hidden');
+    document.getElementById('survey').classList.remove('hidden');
+    render();
+    toast('Autosaved progress restored');
+  } catch (e) {
+    console.warn('Failed to restore draft', e);
+  }
+}
+document.getElementById('participant').addEventListener('input', () => { updateStartButton(); saveDraft(); });
 
 document.getElementById('start-btn').onclick = () => {
   if (!participantId()) { toast('Please enter Participant ID.'); return; }
   startedAt = new Date().toISOString();
+  saveDraft();
   document.getElementById('intro').classList.add('hidden');
   document.getElementById('survey').classList.remove('hidden');
   render();
@@ -131,13 +166,15 @@ document.getElementById('back-btn').onclick = () => {
   const old = responses.find(r => r._taskIndex === idx);
   current = old ? JSON.parse(JSON.stringify(old.answers)) : {};
   render();
+  saveDraft();
 };
 document.getElementById('next-btn').onclick = () => {
   if (!isComplete()) { toast('Please complete all required answers.'); return; }
   saveCurrent(true);
   idx++;
   current = {};
-  if (idx >= tasks.length) finishSurvey(); else render();
+  if (idx >= tasks.length) finishSurvey();
+  else { render(); saveDraft(); }
 };
 
 function partInfo(key){ return PARTS.find(p=>p.key===key); }
@@ -207,6 +244,7 @@ document.getElementById('task-host').addEventListener('click', e => {
   current[b.dataset.k] = b.dataset.v;
   restoreUI();
   updateNext();
+  saveDraft();
 });
 function restoreUI(){
   document.querySelectorAll('button[data-k]').forEach(b => b.classList.toggle('sel', current[b.dataset.k] === b.dataset.v));
@@ -279,6 +317,7 @@ function finishSurvey(){
   document.getElementById('survey').classList.add('hidden');
   document.getElementById('done').classList.remove('hidden');
   finalJSON = buildResult();
+  clearDraft();
   document.getElementById('json-preview').textContent = JSON.stringify(finalJSON,null,2);
   const counts = finalJSON.responses.reduce((a,r)=>{ a[r.part]=(a[r.part]||0)+1; return a; },{});
   document.getElementById('done-summary').innerHTML = `
