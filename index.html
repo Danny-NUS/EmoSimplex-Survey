@@ -87,7 +87,7 @@ function norm(e){ return EMO[e] || e || ''; }
 function up(e){ return norm(e).toUpperCase(); }
 function toast(s){ const t=document.getElementById('toast'); t.textContent=s; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1800); }
 
-fetch('data/survey_manifest.json')
+fetch('data/survey_manifest.json?v=' + Date.now(), { cache: 'no-store' })
   .then(r => r.json())
   .then(m => {
     manifest = m;
